@@ -3,12 +3,11 @@ Module that manages the parsing of the ``ndb.RT_carriers`` database created by `
 """
 from netCDF4 import Dataset
 from yambopy.units import ha2ev
-from mppi.Utilities import Dos
+from yambopy.tools import dos
 
 import numpy as np
 
-[docs]
-class YamboRTCarriersParser():
+class YamboRT_Carriers_DB():
     """
     Class to manage information about the real time distrubtion of carriers from the
     ``ndb.RT_carriers`` database created by `yambo_rt`.
@@ -37,23 +36,20 @@ class YamboRTCarriersParser():
 
     """
 
-    def __init__(self,folder='.',calc='SAVE',rt_db='ndb.RT_carriers'):
+    def __init__(self,folder='.',calc='SAVE',carriers_db='ndb.RT_carriers'):
         # Find path with RT data
-        self.rt_path = '%s/%s/%s'%(folder,calc,rt_db)
+        self.carriers_path = '%s/%s/%s'%(folder,calc,carriers_db)
         self.calc=calc
         try:
-            data_obs= Dataset(self.rt_path)
+            data_obs= Dataset(self.carriers_path)
         except:
-            raise ValueError("Error reading CARRIERS database at %s"%self.rt_path)
-
-        self.read_observables(data_obs)
+            raise ValueError("Error reading CARRIERS database at %s"%self.carriers_path)
 
         self.readDB(data_obs)
 
         data_obs.close()
 
 
-[docs]
     def readDB(self,database):
         """
         Read the data from the ``ndb.RT_carriers`` database created by `yambo_rt`. The variables
