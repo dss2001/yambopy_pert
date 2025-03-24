@@ -3,7 +3,7 @@ Module that manages the parsing of the ``ndb.RT_carriers`` database created by `
 """
 from netCDF4 import Dataset
 from yambopy.units import ha2ev
-from yambopy.tools import dos
+from yambopy.tools.dos import Dos
 
 import numpy as np
 

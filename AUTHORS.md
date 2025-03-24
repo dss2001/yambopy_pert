@@ -23,3 +23,4 @@ Project Authors
 * Davide Romanin
 * Daniel Murphy
 * Daniel Santos Stone
+* Marco D'Alessandro
