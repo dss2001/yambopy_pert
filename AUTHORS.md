@@ -22,4 +22,4 @@ Project Authors
 * Alexandre Morlet
 * Davide Romanin
 * Daniel Murphy
-
+* Daniel Santos Stone
