@@ -2,7 +2,7 @@
 Module that manages the parsing of the ``ndb.RT_carriers`` database created by `yambo_rt`.
 """
 from netCDF4 import Dataset
-from mppi.Utilities.Constants import ha2ev
+from yambopy.units import ha2ev
 from mppi.Utilities import Dos
 
 import numpy as np
@@ -37,13 +37,24 @@ class YamboRTCarriersParser():
 
     """
 
-    def __init__(self,file,verbose=True):
-        self.filename = file
-        if verbose: print('Parse file : %s'%self.filename)
-        self.readDB(verbose)
+    def __init__(self,folder='.',calc='SAVE',rt_db='ndb.RT_carriers'):
+        # Find path with RT data
+        self.rt_path = '%s/%s/%s'%(folder,calc,rt_db)
+        self.calc=calc
+        try:
+            data_obs= Dataset(self.rt_path)
+        except:
+            raise ValueError("Error reading CARRIERS database at %s"%self.rt_path)
+
+        self.read_observables(data_obs)
+
+        self.readDB(data_obs)
+
+        data_obs.close()
+
 
 [docs]
-    def readDB(self,verbose):
+    def readDB(self,database):
         """
         Read the data from the ``ndb.RT_carriers`` database created by `yambo_rt`. The variables
         are extracted from the database and stored in the attributes of the object.
@@ -52,10 +63,7 @@ class YamboRTCarriersParser():
             verbose (:py:class:`boolean`) : define the amount of information provided on terminal
 
         """
-        try:
-            database = Dataset(self.filename)
-        except:
-            raise IOError("Error opening file %s in YamboRTCarriersParser"%self.filename)
+
         self.E_bare = ha2ev*np.array(database.variables['RT_carriers_E_bare'])
         self.f_bare = np.array(database.variables['RT_carriers_f_bare'])
         self.kpoints = np.array(database.variables['RT_kpt'][:].T)
@@ -65,7 +73,6 @@ class YamboRTCarriersParser():
         self.delta_f = np.array(database.variables['RT_carriers_delta_f'])
 
 
-[docs]
     def get_info(self):
         """
         Provide information on the attributes of the class
@@ -79,7 +86,6 @@ class YamboRTCarriersParser():
         print('delta_f',self.delta_f.shape)
 
 
-[docs]
     def build_f_bare_dos(self, dE = 0.1, eta = 0.05, broad_kind = 'lorentzian'):
         """
         For each kpoint build a dos which expresses the bare occupation level in terms
